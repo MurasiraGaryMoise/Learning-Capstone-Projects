@@ -6,6 +6,7 @@ A fully normalized relational database for a library system that tracks books, m
 
 ## Table of Contents
 
+- [ER Diagram](#er-diagram)
 - [Schema Overview](#schema-overview)
 - [Phase 1 — Requirements & Schema Design](#phase-1--requirements--schema-design)
 - [Phase 2 — Build the Schema](#phase-2--build-the-schema)
@@ -13,6 +14,12 @@ A fully normalized relational database for a library system that tracks books, m
 - [Phase 4 — Core Queries](#phase-4--core-queries)
 - [Phase 5 — Advanced Features](#phase-5--advanced-features)
 - [Phase 6 — Wrap-Up](#phase-6--wrap-up)
+
+---
+
+## ER Diagram
+
+![Library Database ERD](assets/ERD%20diagram.png)
 
 ---
 
