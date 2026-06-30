@@ -1,0 +1,309 @@
+								==TABLE OF CONTENTS==
+DABABASES
+TABLES
+SELECT
+UPDATE & DELETE Data from Table
+UNIQUE && NOT NULL && CHECK && DEFAULT CONSTRAINTS
+PRIMARY && FOREIGN KEYS
+INTRO TO JOINS
+FUNCTIONS
+
+
+=================================================================================
+			1.DATABASES
+=================================================================================
+
+1.1.Create A Database: CREATE DATABASE mydb
+1.2.Use A Database: USE mydb
+1.3.Delete A Database: DROP DATABASE mydb
+
+=================================================================================
+			2.TABLES
+=================================================================================
+2.1.Table Types: NUMERIC(INT,BIGINT,DECIMAL(p,s),FLOAT), STRINGS(CHAR(n),VARCHAR(n),TEXT), DATA&TIME(DATE,TIME,DATETIME,TIMESTAMP), BINARY TYPES(BINARY(n),IMAGE,VARBINARY(n), ....
+
+2.2.Create A Table: CREATE TABLE table_name( ... );
+	      e.g:
+		CREATE TABLE employees(
+			employees_id INT,
+			first_name VARCHAR(50),
+			last_name VARCHAR(50),
+			hourly_pay DECIMAL(5,2)
+			hire_date DATE,
+		);
+
+2.3.Rename Table: RENAME TABLE original_name new_name
+	      e.g: RENAME TABLE employees TO workers;
+
+2.4.Delete Table: DROP TABLE table_name; (e.g: replace: table_name --> employees)
+
+2.5.Update A Table:
+	Adding a new Column: ALTER TABLE employees ADD phone_number VARCHAR(50);
+	Renaming a new Column: ALTER TABLE employees RENAME COLUMN phone_number TO email;
+	Changing Data Type of a Column: ALTER TABLE employees MODIFY COLUMN email VARCHAR(100);
+	Moving Position of a Column: ALTER TABLE employees MODIFY COLUMN email VARCHAR(100) AFTER last_name; (if want to be firt position then replace AFTER by FIRST;)
+	Delete a Column: ALTER TABLE employees DROP COLUMN email;
+
+2.6.Inserting Data In Respective Columns: INSERT INTO employees VALUES (1, "Eugene", "Krabs", 25.50, "2023-01-02"), ( ...if any );
+
+
+=================================================================================
+			3.SELECT
+=================================================================================
+
+3.1.Get Everything: SELECT * FROM employees;
+3.2.Specific Column(s): SELECT last_name,first_name FROM employees; //outputs only the row and their respective data.
+3.3.WHERE clause: SELECT * FROM employees WHERE employee_id = 1;
+	      SELECT * FROM employees WHERE first_name = 1;
+	      SELECT * FROM employees WHERE hourly_page >= 15;
+	      SELECT * FROM employees WHERE hire_data >= "2023-01-03";
+	      SELECT * FROM employees WHERE employee_id != 1; //("!=" means not equal)
+
+=================================================================================
+			4.UPDATE & DELETE Data from Table
+=================================================================================
+
+Changing || Adding data(UPDATE): UPDATE table_name SET column_name=new_value,... WHERE condition(e.g employee_id = 2);
+			 E.g: UPDATE employees SET hourly_pay=10.12, hire_date=2023-01-07 WHERE employee_id = 7;
+ 
+Delete Data: DELETE FROM employees WHERE employees_id = 6;
+
+
+=================================================================================
+			5.UNIQUE && NOT NULL && CHECK && DEFAULT CONSTRAINTS
+=================================================================================
+
+5.1.UNIQUE is applied to a column and means it doesn't allow duplicates.
+
+	Ways To Create:
+		1. On Creation of Table: CREATE TABLE products (product_id INT,product_name VARCHAR(25) UNIQUE, price DECIMAL(4,2)); //To test Insert duplicate names!
+		2. On an Alrealy Created Table: ALTER TABLE products ADD CONSTRAINT UNIQUE(product_name); //To test Insert duplicate names!
+
+5.2.NOT NULL is applied to a column and means the column doesn't accept empty data.
+
+	Ways To Create:
+		1. On Creation of Table: CREATE TABLE products (product_id INT,product_name VARCHAR(25) UNIQUE, price DECIMAL(4,2) NOT NULL);
+		2. On an Alrealy Created Table: ALTER TABLE products MODIFY price DECIMAL(4,2) NOT NULL;
+
+5.3.CHECK is applied to a column and means the data that is being inserted corresponds to a given condition(e.g: price > 12.22).
+
+	Ways To Create:
+		1. On Creation of Table: CREATE TABLE employees (employees_id INT,first_name VARCHAR(25), last_name VARCHAR(25), hourly_pay DECIMAL(5,2), hire_date DATE, CONSTRAINT chk_hourly_pay CHECK (hourly_pay >= 10.00); // chk_hourly_pay is just an identifier; you can name it whatever.
+		2. On an Already Created Table: ALTER TABLE employees ADD CONSTRAINT chk_hourly_pay CHECK(hourly_pay >= 10.00)
+
+		3. To delete A Check: ALTER TABLE employees DROP CHECK chk_hourly_pay;
+
+5.4.DEFAULT is a backup(default) value added to a column incase non was set manually.
+
+	Ways To Create:
+		1. On Creation of Table: CREATE TABLE products (product_id INT,product_name VARCHAR(25), price DECIMAL(4,2) DEFAULT 0);
+		2. On an Alrealy Created Table: ALTER TABLE producs ALTER price SET DEFAULT 0;
+
+			Test examples:
+				CREATE TABLE transactions(transaction_id INT, amount DECIMAL(5, 2), transaction_date DATETIME DEFAULT NOW());
+
+				INSERT INTO products (product_id, product_name) VALUES (104, "straw"), (105, "napkin"), (106, "fork"), (107, "spoon");
+
+
+=================================================================================
+			6. PRIMARY && FOREIGN KEYS
+=================================================================================
+
+PRIMARY KEY is a unique identifier**:**
+	Ways To Create:
+		1. On Creation of Table: CREATE TABLE transactions(transanction_id INT PRIMARY KEY, amount DECIMAL(5,2));
+		2. On an Alrealy Created Table: ALTER TABLE transactions ADD CONSTRAINT PRIMARY KEY(transaction_id);
+
+FOREIGN KEY is a constraint that defines a relationship between tables by linking a column in one table to the primary key of another.
+
+	Ways To create:
+		1. On Creation of Table example: CREATE TABLE customers(customer_id INT PRIMARY KEY AUTO_INCREMENT, first_name VARCHAR(50), last_name 							 VARCHAR(50));
+					 👉CREATE TABLE transactions(transaction_id INT PRIMARY KEY AUTO_INCREMENT,amount DECIMAL(5,2), customer_id INT,
+					 FOREIGN KEY(customer_id) REFERENCES customers(customer_id));
+	
+		Overview: In transactions, the column customer_id is declared as a foreign key. It references customer_id in the customers table, which is 			  the primary key there. This means every transaction must be linked to a valid customer. You cannot insert a transaction with a 			  customer_id that doesn’t exist in the customers table.
+
+		2. To Delete a foreign Key: ALTER TABLE transactions DROP FOREIGN KEY(transactions_ibfk_1);
+
+		3. To apply foreign on a table that already exists: ALTER TABLE (optional to name the key: ADD CONSTRAINT fk_customer_id) FOREIGN KEY(customer_id) REFERENCES customers(customer_id);
+
+
+=================================================================================
+			7. INTRO TO JOINS
+=================================================================================
+
+A JOIN in MySQL is a clause used in a SELECT statement to combine rows from two or more tables based on a related column between them. It allows you to query data across multiple tables as if they were one, by matching values in specified columns.
+
+7.1. INNER JOIN returns rows when there is a match in both tables.
+
+    Ways To Create:
+        1. Example: SELECT transaction_id, amount, first_name, last_name         (or * to return all columns)
+           FROM transactions
+           INNER JOIN customers ON transactions.customer_id = customers.customer_id;
+
+        👉 Scenario: Useful when you want to get specific customers and their respective transactions.
+           For instance, if you want to see only customers who actually made purchases, INNER JOIN
+           ensures you don’t get customers with no transactions.
+
+7.2. LEFT JOIN (LEFT OUTER JOIN) returns all rows from the left table (customers), and matched rows from the right table (transactions). If no match, NULL is returned.
+
+    Ways To Create:
+        1. Example: SELECT transaction_id, amount, first_name, last_name         (or * to return all columns)
+           FROM customers
+           LEFT JOIN transactions ON customers.customer_id = transactions.customer_id;
+
+        👉 Scenario: Useful when you want to list all customers, including those who haven’t made
+           any transactions yet. For example, if you’re checking which students signed up for the
+           cafeteria app but haven’t ordered food.
+
+7.3. RIGHT JOIN (RIGHT OUTER JOIN) returns all rows from the right table (transactions), and matched rows from the left table (customers). If no match, NULL is returned.
+
+    Ways To Create:
+        1. Example: SELECT transaction_id, amount, first_name, last_name         (or * to return all columns)
+           FROM transactions
+           RIGHT JOIN customers ON transactions.customer_id = customers.customer_id;
+
+        👉 Scenario: Useful when you want to list all transactions, even if some don’t have a valid
+           customer record (e.g., a transaction was logged but the customer account was deleted).
+
+
+=================================================================================
+			8. FUNCTIONS
+=================================================================================
+ 
+8.1. COUNT() returns the number of rows that match a specified condition.
+
+    Ways To Use:
+        1. Example: SELECT COUNT(*) AS total_transactions FROM transactions;
+        👉 Scenario: Useful when you want to know how many transactions have been made in the cafeteria.
+
+8.2. SUM() returns the total sum of a numeric column.
+
+    Ways To Use:
+        1. Example: SELECT SUM(amount) AS total_sales FROM transactions;
+        👉 Scenario: Useful when calculating the total revenue generated from all food orders.
+
+8.3. AVG() returns the average value of a numeric column.
+
+    Ways To Use:
+        1. Example: SELECT AVG(amount) AS average_spent FROM transactions;
+        👉 Scenario: Useful when you want to know the average amount students spend per transaction.
+
+8.4. MIN() returns the smallest value in a column.
+
+    Ways To Use:
+        1. Example: SELECT MIN(amount) AS lowest_transaction FROM transactions;
+        👉 Scenario: Useful when checking the smallest purchase made (e.g., cheapest item ordered).
+
+8.5. MAX() returns the largest value in a column.
+
+    Ways To Use:
+        1. Example: SELECT MAX(amount) AS highest_transaction FROM transactions;
+        👉 Scenario: Useful when checking the biggest purchase made (e.g., most expensive order).
+
+8.6. CONCAT() combines two or more strings into one.
+
+    Ways To Use:
+        1. Example: SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM customers;
+        👉 Scenario: Useful when displaying a customer’s full name instead of separate first and last names.
+
+8.7. UPPER() / LOWER() converts text to uppercase or lowercase.
+
+    Ways To Use:
+        1. Example: SELECT UPPER(first_name) AS name_upper FROM customers;
+        👉 Scenario: Useful when standardizing text for reports or comparisons.
+
+8.8. NOW() returns the current date and time.
+
+    Ways To Use:
+        1. Example: SELECT NOW() AS current_time;
+        👉 Scenario: Useful when recording the exact time a transaction was made.
+
+8.9. ROUND() rounds a numeric value to a specified number of decimal places.
+
+    Ways To Use:
+        1. Example: SELECT ROUND(amount, 0) AS rounded_amount FROM transactions;
+        👉 Scenario: Useful when you want to display transaction amounts as whole numbers.
+
+
+=================================================================================
+			8. AND, OR, NOT, BETWEEN, IN
+=================================================================================
+
+8.1. AND is used to combine multiple conditions; all must be true for the row to be returned.
+
+    Ways To Use:
+        1. Example: SELECT * FROM transactions
+           WHERE amount > 50 AND transaction_date = '2026-06-17';
+
+        👉 Scenario: Useful when you want to find transactions above 50 that happened on a specific date.
+
+8.2. OR is used to combine multiple conditions; at least one must be true for the row to be returned.
+
+    Ways To Use:
+        1. Example: SELECT * FROM customers
+           WHERE first_name = 'Alice' OR last_name = 'Smith';
+
+        👉 Scenario: Useful when you want to find customers who are either named Alice or have the last name Smith.
+
+8.3. NOT is used to exclude rows that match a condition.
+
+    Ways To Use:
+        1. Example: SELECT * FROM products
+           WHERE NOT price < 10;
+
+        👉 Scenario: Useful when you want to list all products that cost 10 or more, excluding cheaper items.
+
+8.4. BETWEEN is used to filter results within a range (inclusive).
+
+    Ways To Use:
+        1. Example: SELECT * FROM transactions
+           WHERE amount BETWEEN 20 AND 100;
+
+        👉 Scenario: Useful when you want to find transactions that fall within a specific spending range, e.g., between 20 and 100 units.
+
+8.5. IN is used to filter results that match any value in a list.
+
+    Ways To Use:
+        1. Example: SELECT * FROM customers
+           WHERE last_name IN ('Smith', 'Johnson', 'Williams');
+
+        👉 Scenario: Useful when you want to find customers whose last names are specifically Smith, Johnson, or Williams.
+
+8.6. Combining Conditions (AND, OR, NOT, BETWEEN, IN together):
+
+        1. Example: SELECT * FROM transactions
+           WHERE (amount BETWEEN 50 AND 200 AND transaction_date = '2026-06-17')
+           OR (NOT amount < 10)
+           AND customer_id IN (101, 102, 103);
+
+        👉 Scenario: Useful when you want to find transactions in a certain range on a specific date,
+           OR exclude very small transactions, while also limiting results to certain customers.
+
+=================================================================================
+			9. WILD CARDS
+=================================================================================
+wildcards are special characters used with the LIKE operator to search for patterns in text data. The two main wildcards are % (matches zero or more characters) and _ (matches exactly one character).
+
+The % character: e.g: SELECT * FROM Customers WHERE City LIKE 'ber%'; explanation: Finds cities starting with "ber" (Berlin, Bern).
+		     SELECT * FROM Customers WHERE City LIKE '%ondon'; explanation: Finds cities ending with "ondon" (London).
+		     SELECT * FROM Customers WHERE City LIKE '%es%'; explanation: Finds cities containing "es" anywhere (e.g., Los Angeles, Estes).
+		     SELECT * FROM Customers WHERE ContactName LIKE 'a%o'; explanation: Finds names starting with "a" and ending with "o" (e.g: "Antonio").
+
+The _ character: e.g: SELECT * FROM Employees WHERE name LIKE 'J_n'; explanation: Matches: "Jan", "Jen", "Jon", Does not match: "John" (because that has two characters after J).
+		      SELECT * FROM Customers WHERE postalCode LIKE '12__'; explanation: Matches: "1200", "1234", "1299", Does not: "120" (too short) or "12345" (too long).
+
+
+The _ and % mix: e.g: SELECT * FROM Orders WHERE orderID LIKE '_23%'; explanation: The first character can be anything, followed by "23", then any number of characters. Matches: "123", "1234", "12345", "9237"
+
+Tip:
+Use _ when you want precise control over the number of characters.
+
+Use % when you want flexibility with length.
+
+Combine them for powerful pattern matching.
+
+
+
+
+	
