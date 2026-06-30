@@ -19,7 +19,7 @@ A fully normalized relational database for a library system that tracks books, m
 
 ## ER Diagram
 
-![Library Database ERD](assets/ERD%20diagram.png)
+![Library Database ERD](assets/ERD-diagram.png)
 
 ---
 
