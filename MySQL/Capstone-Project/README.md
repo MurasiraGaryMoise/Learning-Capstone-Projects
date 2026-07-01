@@ -62,6 +62,8 @@ Before writing SQL, sketch an ER diagram (paper, [draw.io](https://draw.io), or 
 - Add constraints: `PRIMARY KEY`, `FOREIGN KEY`, `NOT NULL`, `UNIQUE` (on `isbn`, `email`), `CHECK` (e.g. `available_copies >= 0`)
 - Add indexes on frequently searched columns: `isbn`, `email`, `due_date`
 
+📄 [View schema.sql](schema/schema.sql)
+
 ---
 
 ## Phase 3 — Populate with Data
