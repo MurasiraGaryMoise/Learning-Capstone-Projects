@@ -1,7 +1,10 @@
+CREATE DATABASE IF NOT EXISTS library_db;
+USE library_db;
+
 CREATE TABLE IF NOT EXISTS authors(
   author_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  birth_year YEAR,
+  birth_year INT,
   nationality VARCHAR(50)
 );
 
@@ -27,7 +30,7 @@ CREATE TABLE IF NOT EXISTS books(
   isbn VARCHAR(15) NOT NULL,
   author_id INT NOT NULL,
   genre VARCHAR(50),
-  publication_year YEAR,
+  publication_year INT,
   total_copies INT,
   available_copies INT,
   FOREIGN KEY(author_id) REFERENCES authors(author_id)
